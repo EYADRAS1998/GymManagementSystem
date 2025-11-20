@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/GymManagementSystem/CopilotIndices/17.14.1091.29919
+/.vs/GymManagementSystem/DesignTimeBuild
+/.vs/GymManagementSystem/FileContentIndex
+/.vs
