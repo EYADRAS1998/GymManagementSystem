@@ -1,49 +1,93 @@
+# ========================
 # Build folders
+# ========================
 bin/
 obj/
 Debug/
 Release/
+_publish/
 
+# ========================
 # Visual Studio
+# ========================
 .vs/
 *.user
 *.suo
+*.userosscache
+*.sln.docstates
+*.vspscc
+*.vssscc
 
-# ASP.NET Core logs
+# ========================
+# Rider / VS Code
+# ========================
+.idea/
+.vscode/
+
+# ========================
+# ReSharper
+# ========================
+_ReSharper.Caches/
+
+# ========================
+# ASP.NET Core / .NET
+# ========================
 logs/
 *.log
+*.cache.json
+*.Designer.cs
+**/obj/**/*.AssemblyInfo.cs
+**/obj/**/*.AssemblyReference.cache
+**/obj/**/*.cache.json
 
+# EF Core Migrations Snapshots
+**/Migrations/*.Designer.cs
+**/Migrations/*.Snapshot.cs
+
+# ========================
 # NuGet packages
+# ========================
 *.nupkg
 packages/
 .nuget/
 
+# ========================
 # Dotnet tools
+# ========================
 .dotnet-tools/
 
+# ========================
 # Publish output
-_publish/
+# ========================
 *.pubxml
 *.pubxml.user
 
-# Rider / VS Code
-.idea/
-.vscode/
+# ========================
+# SQL Server / LocalDB
+# ========================
+*.mdf
+*.ldf
 
-# Resharper
-_ReSharper.Caches/
-
-# Temporary files
+# ========================
+# Temporary / system files
+# ========================
 *.tmp
 *.temp
 *.bak
-
-# System files
 Thumbs.db
 desktop.ini
 
+# ========================
 # Environment & secrets
+# ========================
 appsettings.Development.json
 appsettings.*.json
 .env
 .env.*
+
+# ========================
+# Optional: Coverage / Test results
+# ========================
+coverage/
+*.coverage
+TestResults/
