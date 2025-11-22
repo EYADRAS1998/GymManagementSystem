@@ -47,8 +47,20 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "IdentityService API v1");
+        c.RoutePrefix = string.Empty; // Swagger يظهر عند الدخول للـ root
+    });
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
