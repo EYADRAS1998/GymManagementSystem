@@ -5,9 +5,17 @@ using IdentityService.Infrastructure.Auth;
 using IdentityService.Infrastructure.Persistence;
 using IdentityService.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using IdentityService.Application.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers()
+    .AddFluentValidation(fv =>
+    {
+        fv.RegisterValidatorsFromAssemblyContaining<CreateUserDtoValidator>();
+    });
 // 1️⃣ DbContext مع SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
