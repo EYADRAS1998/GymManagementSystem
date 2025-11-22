@@ -1,0 +1,49 @@
+# Build folders
+bin/
+obj/
+Debug/
+Release/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# ASP.NET Core logs
+logs/
+*.log
+
+# NuGet packages
+*.nupkg
+packages/
+.nuget/
+
+# Dotnet tools
+.dotnet-tools/
+
+# Publish output
+_publish/
+*.pubxml
+*.pubxml.user
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# Resharper
+_ReSharper.Caches/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# System files
+Thumbs.db
+desktop.ini
+
+# Environment & secrets
+appsettings.Development.json
+appsettings.*.json
+.env
+.env.*
