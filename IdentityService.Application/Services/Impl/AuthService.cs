@@ -20,6 +20,10 @@ namespace IdentityService.Application.Services.Impl
 
         public async Task<string> RegisterAsync(CreateUserDto dto)
         {
+            // تحقق من كلمة المرور والتأكيد
+            if (dto.Password != dto.ConfirmPassword)
+                throw new Exception("Passwords do not match");
+
             // تحقق من وجود البريد أو اسم المستخدم
             if (await _unitOfWork.Users.ExistsByEmailAsync(dto.Email))
                 throw new Exception("Email already exists");
@@ -38,7 +42,7 @@ namespace IdentityService.Application.Services.Impl
 
             await _unitOfWork.Users.AddAsync(user);
 
-            // إضافة الدور (افتراضياً يمكن أن يكون "User" إذا لم يحدد)
+            // إضافة الدور (افتراضياً "User" إذا لم يحدد)
             var roleName = string.IsNullOrEmpty(dto.Role) ? "User" : dto.Role;
             var role = await _unitOfWork.Roles.GetByNameAsync(roleName);
             if (role != null)
@@ -56,6 +60,7 @@ namespace IdentityService.Application.Services.Impl
             // إنشاء JWT
             return _jwtToken.GenerateToken(user);
         }
+
 
         public async Task<string> LoginAsync(string userNameOrEmail, string password)
         {
