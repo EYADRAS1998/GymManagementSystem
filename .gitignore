@@ -86,7 +86,7 @@ appsettings.*.json
 .env.*
 
 # ========================
-# Optional: Coverage Test results
+# Optional: Coverage // Test results
 # ========================
 coverage/
 *.coverage
