@@ -33,11 +33,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\source\\repos\\GymManagementSystem\\IdentityService.Infrastructure\\IdentityService.Infrastructure.csproj",
+      "projectUniqueName": "C:\\Users\\EYAD\\Source\\Repos\\GymManagementSystem\\IdentityService.Infrastructure\\IdentityService.Infrastructure.csproj",
       "projectName": "IdentityService.Infrastructure",
-      "projectPath": "D:\\source\\repos\\GymManagementSystem\\IdentityService.Infrastructure\\IdentityService.Infrastructure.csproj",
+      "projectPath": "C:\\Users\\EYAD\\Source\\Repos\\GymManagementSystem\\IdentityService.Infrastructure\\IdentityService.Infrastructure.csproj",
       "packagesPath": "C:\\Users\\EYAD\\.nuget\\packages\\",
-      "outputPath": "D:\\source\\repos\\GymManagementSystem\\IdentityService.Infrastructure\\obj\\",
+      "outputPath": "C:\\Users\\EYAD\\Source\\Repos\\GymManagementSystem\\IdentityService.Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -59,8 +59,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "D:\\source\\repos\\GymManagementSystem\\IdentityService.Domain\\IdentityService.Domain.csproj": {
-              "projectPath": "D:\\source\\repos\\GymManagementSystem\\IdentityService.Domain\\IdentityService.Domain.csproj"
+            "C:\\Users\\EYAD\\Source\\Repos\\GymManagementSystem\\IdentityService.Domain\\IdentityService.Domain.csproj": {
+              "projectPath": "C:\\Users\\EYAD\\Source\\Repos\\GymManagementSystem\\IdentityService.Domain\\IdentityService.Domain.csproj"
             }
           }
         }
