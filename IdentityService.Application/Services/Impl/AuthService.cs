@@ -20,16 +20,19 @@ namespace IdentityService.Application.Services.Impl
 
         public async Task<string> RegisterAsync(CreateUserDto dto)
         {
-            // تحقق من كلمة المرور والتأكيد
-            if (dto.Password != dto.ConfirmPassword)
-                throw new Exception("Passwords do not match");
-
             // تحقق من وجود البريد أو اسم المستخدم
             if (await _unitOfWork.Users.ExistsByEmailAsync(dto.Email))
                 throw new Exception("Email already exists");
 
             if (await _unitOfWork.Users.ExistsByUserNameAsync(dto.UserName))
                 throw new Exception("UserName already exists");
+
+            // 🔹 التحقق من الدور قبل إنشاء المستخدم
+            var roleName = string.IsNullOrWhiteSpace(dto.Role) ? "User" : dto.Role;
+
+            var role = await _unitOfWork.Roles.GetByNameAsync(roleName);
+            if (role == null)
+                throw new Exception($"Role '{roleName}' does not exist.");
 
             // إنشاء المستخدم
             var user = new User
@@ -42,22 +45,16 @@ namespace IdentityService.Application.Services.Impl
 
             await _unitOfWork.Users.AddAsync(user);
 
-            // إضافة الدور (افتراضياً "User" إذا لم يحدد)
-            var roleName = string.IsNullOrEmpty(dto.Role) ? "User" : dto.Role;
-            var role = await _unitOfWork.Roles.GetByNameAsync(roleName);
-            if (role != null)
+            // إضافة الدور
+            await _unitOfWork.UserRoles.AddUserRoleAsync(new UserRole
             {
-                await _unitOfWork.UserRoles.AddUserRoleAsync(new UserRole
-                {
-                    UserId = user.Id,
-                    RoleId = role.Id
-                });
-            }
+                UserId = user.Id,
+                RoleId = role.Id
+            });
 
-            // حفظ جميع التغييرات مرة واحدة
+            // حفظ
             await _unitOfWork.CommitAsync();
 
-            // إنشاء JWT
             return _jwtToken.GenerateToken(user);
         }
 

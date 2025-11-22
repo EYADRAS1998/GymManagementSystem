@@ -1,13 +1,14 @@
-﻿using IdentityService.Application.Services;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using IdentityService.Application.Services;
 using IdentityService.Application.Services.Impl;
+using IdentityService.Application.Validators;
 using IdentityService.Domain.Repositories;
 using IdentityService.Infrastructure.Auth;
 using IdentityService.Infrastructure.Persistence;
 using IdentityService.Infrastructure.Repositories;
+using IdentityService.Infrastructure.Seed;
 using Microsoft.EntityFrameworkCore;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using IdentityService.Application.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,4 +75,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await DatabaseSeeder.SeedAsync(db);
+}
+
+
 app.Run();
+
