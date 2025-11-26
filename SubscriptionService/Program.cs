@@ -1,31 +1,37 @@
-ï»¿using FluentValidation;
+using AutoMapper;
+using FluentValidation;
 using FluentValidation.AspNetCore;
-using MembersService.Application.Services;
-using MembersService.Application.Services.Impl;
-using MembersService.Application.Validators;
-using MembersService.Domain.Repositories;
-using MembersService.Infrastructure.DependencyInjection;
-using MembersService.Infrastructure.Persistence;
-using MembersService.Infrastructure.Repositories;
-using MembersService.Infrastructure.UnitOFWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using SubscriptionService.Application.MappingProfile;
+using SubscriptionService.Application.Services;
+using SubscriptionService.Application.Services.Impl;
+using SubscriptionService.Application.Validators;
+using SubscriptionService.Domain.Repositories;
+using SubscriptionService.Infrastructure.Persistence;
+using SubscriptionService.Infrastructure.Repositories;
+using SubscriptionService.Infrastructure.UnitOFWork;
 using System.Text;
 
+// ÅÖÇÝÉ AutoMapper
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile<MappingProfile>();
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IMemberRepository, MemberRepository>();
-builder.Services.AddScoped<IMemberProgressRepository, MemberProgressRepository>();
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<IPlanRepository, PlanRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-builder.Services.AddScoped<IMemberService, MemberService>();
-builder.Services.AddScoped<IMemberProgressService, MemberProgressService>();
-
+builder.Services.AddScoped<IPlanService, PlanService>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService.Application.Services.Impl.SubscriptionService>();
 
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
@@ -39,7 +45,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Ø£Ø¯Ø®Ù„ Ø§Ù„ØªÙˆÙƒÙ† Ù‡Ù†Ø§ Bearer Ù…Ø«Ù„:{token}"
+        Description = "ÃÏÎá ÇáÊæßä åäÇ Bearer ãËá:{token}"
     });
 
     c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
@@ -57,9 +63,10 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+// Add services to the container.
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
-
-builder.Services.AddValidatorsFromAssemblyContaining<CreateMemberDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<SubscriptionCreateDtoValidator>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -76,7 +83,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddAuthorization();
 
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -86,7 +95,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-        c.RoutePrefix = string.Empty; // Ù‡Ø°Ø§ ÙŠØ¬Ø¹Ù„ Swagger UI Ø¹Ù„Ù‰ /
+        c.RoutePrefix = string.Empty; // åÐÇ íÌÚá Swagger UI Úáì /
     });
 }
 
@@ -97,3 +106,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
