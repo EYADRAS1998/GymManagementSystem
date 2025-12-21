@@ -4,9 +4,7 @@ using PaymentService.Domian.Entities;
 using PaymentService.Domian.Enums;
 using PaymentService.Domian.Repositories;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PaymentService.Application.Services.Impl
@@ -29,6 +27,23 @@ namespace PaymentService.Application.Services.Impl
 
         public async Task<Guid> CreatePaymentAsync(CreatePaymentDto dto, Guid createdBy)
         {
+            // Validation: Cash payment must not have installments
+            if (dto.PaymentType == PaymentType.Cash && dto.Installments?.Any() == true)
+                throw new InvalidOperationException("Cash payment cannot have installments.");
+
+            // Validation: Installments must exist
+            if (dto.PaymentType == PaymentType.Installments &&
+                (dto.Installments == null || !dto.Installments.Any()))
+                throw new InvalidOperationException("Installments are required.");
+
+            // Validation: Installments total must equal payment total
+            if (dto.PaymentType == PaymentType.Installments)
+            {
+                var installmentsTotal = dto.Installments!.Sum(x => x.Amount);
+                if (installmentsTotal != dto.TotalAmount)
+                    throw new InvalidOperationException("Installments total must equal total amount.");
+            }
+
             var payment = new Payment
             {
                 Id = Guid.NewGuid(),
@@ -38,24 +53,36 @@ namespace PaymentService.Application.Services.Impl
                 Currency = dto.Currency,
                 PaymentType = dto.PaymentType,
                 CreatedAt = DateTime.UtcNow,
-                CreatedBy = createdBy
+                CreatedBy = createdBy,
+                Status = dto.PaymentType == PaymentType.Cash
+                    ? PaymentStatus.Paid
+                    : PaymentStatus.Pending
             };
-
-            if (dto.PaymentType == PaymentType.Cash)
-            {
-                payment.Status = PaymentStatus.Paid;
-            }
-            else
-            {
-                payment.Status = PaymentStatus.Pending;
-            }
 
             await _paymentRepository.AddAsync(payment);
 
-            if (dto.PaymentType == PaymentType.Installments)
+            // Cash payment → single paid installment
+            if (dto.PaymentType == PaymentType.Cash)
+            {
+                var installment = new PaymentInstallment
+                {
+                    Id = Guid.NewGuid(),
+                    PaymentId = payment.Id,
+                    Amount = payment.TotalAmount,
+                    DueDate = payment.CreatedAt,
+                    PaidAt = payment.CreatedAt,
+                    Status = InstallmentStatus.Paid
+                };
+
+                await _installmentRepository.AddAsync(installment);
+            }
+            else
             {
                 foreach (var installmentDto in dto.Installments!)
                 {
+                    if (installmentDto.Amount <= 0)
+                        throw new InvalidOperationException("Installment amount must be greater than zero.");
+
                     var installment = new PaymentInstallment
                     {
                         Id = Guid.NewGuid(),
@@ -92,14 +119,9 @@ namespace PaymentService.Application.Services.Impl
             var allInstallments = await _installmentRepository
                 .GetByPaymentIdAsync(payment.Id);
 
-            if (allInstallments.All(x => x.Status == InstallmentStatus.Paid))
-            {
-                payment.Status = PaymentStatus.Paid;
-            }
-            else
-            {
-                payment.Status = PaymentStatus.PartiallyPaid;
-            }
+            payment.Status = allInstallments.All(x => x.Status == InstallmentStatus.Paid)
+                ? PaymentStatus.Paid
+                : PaymentStatus.PartiallyPaid;
 
             _paymentRepository.Update(payment);
             await _unitOfWork.SaveChangesAsync();
