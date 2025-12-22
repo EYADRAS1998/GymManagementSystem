@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.DTOs;
 using MembersService.Application.DTOs;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace MembersService.Application.Services
         // Member Operations
         Task<MemberDto> GetByIdAsync(Guid id);
         Task<PagedResult<MemberDto>> GetPagedAsync(int pageNumber, int pageSize);
-        Task<Guid> CreateAsync(CreateMemberDto dto);
+        Task<Guid> CreateAsync(RegisterMemberDto dto);
         Task UpdateAsync(Guid id, UpdateMemberDto dto);
         Task DeleteAsync(Guid id);
 

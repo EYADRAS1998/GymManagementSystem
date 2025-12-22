@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MembersService.Infrastructure\MembersService.Infrastructure.csproj" />
     <ProjectReference Include="..\PaymentService.Application\PaymentService.Application.csproj" />
     <ProjectReference Include="..\PaymentService.Infrastructure\PaymentService.Infrastructure.csproj" />
   </ItemGroup>

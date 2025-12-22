@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MembersService.Domain.Events
+namespace Common.Events
 {
     public record MemberCreatedEvent(
         Guid MemberId,
@@ -15,7 +15,18 @@ namespace MembersService.Domain.Events
         string Gender,
         string? Notes,
         Guid CreatedBy,
-        DateTime CreatedAt
+        DateTime CreatedAt,
+
+        // تفاصيل الاشتراك المدخلة من المستخدم
+        Guid PlanId,
+        DateTime StartDate,
+        DateTime EndDate,
+        bool IsActive,
+
+        // تفاصيل الدفع
+        decimal TotalAmount,
+        bool IsInstallment,
+        string Currency
     );
 
 }
