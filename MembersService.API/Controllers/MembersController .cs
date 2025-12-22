@@ -1,4 +1,5 @@
-﻿using MembersService.Application.DTOs;
+﻿using Common.DTOs;
+using MembersService.Application.DTOs;
 using MembersService.Application.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,26 @@ namespace MembersService.API.Controllers
                 return NotFound();
 
             return Ok(member);
+        }
+        /// <summary>
+        /// تسجيل عضو جديد مع بيانات الاشتراك والدفع
+        /// </summary>
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterMemberDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // استخراج UserId من JWT
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+            if (userIdClaim == null) return Unauthorized("UserId claim is missing in the token.");
+
+            dto.CreatedBy = Guid.Parse(userIdClaim.Value);
+
+            // إنشاء العضو ونشر الحدث تلقائيًا
+            var memberId = await _memberService.CreateAsync(dto);
+
+            return CreatedAtAction(nameof(GetById), new { id = memberId }, new { Id = memberId });
         }
 
         [HttpGet]

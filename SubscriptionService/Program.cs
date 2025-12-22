@@ -1,10 +1,12 @@
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MembersService.Infrastructure.Messaging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using SubscriptionService.Application.EventHandlers;
 using SubscriptionService.Application.MappingProfile;
 using SubscriptionService.Application.Services;
 using SubscriptionService.Application.Services.Impl;
@@ -17,6 +19,13 @@ using System.Text;
 
 // ≈÷«›… AutoMapper
 var builder = WebApplication.CreateBuilder(args);
+
+// „ƒﬁ « MockPublisher
+builder.Services.AddSingleton<IEventPublisher, MockEventPublisher>();
+
+//  ”ÃÌ· EventHandler
+builder.Services.AddScoped<MemberCreatedEventHandler>();
+
 
 builder.Services.AddAutoMapper(cfg =>
 {

@@ -1,9 +1,11 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MembersService.Infrastructure.Messaging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using PaymentService.Application.EventHandlers;
 using PaymentService.Application.Services.Abstractions;
 using PaymentService.Application.Services.Impl;
 using PaymentService.Application.Validators;
@@ -13,6 +15,12 @@ using PaymentService.Infrastructure.Repositories;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// „ƒﬁ « MockPublisher ·⁄—÷ «·√Õœ«À ›Ì Console
+builder.Services.AddSingleton<IEventPublisher, MockEventPublisher>();
+
+//  ”ÃÌ· EventHandler
+builder.Services.AddScoped<SubscriptionCreatedEventHandler>();
 
 
 builder.Services.AddDbContext<PaymentDbContext>(options =>

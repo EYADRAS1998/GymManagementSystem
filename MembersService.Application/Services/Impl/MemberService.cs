@@ -1,6 +1,7 @@
 ﻿using Common;
+using Common.DTOs;
+using Common.Events;
 using MembersService.Application.DTOs;
-using MembersService.Domain.Events;
 using MembersService.Domain.Repositories;
 using MembersService.Infrastructure.Messaging;
 using System;
@@ -23,7 +24,7 @@ namespace MembersService.Application.Services.Impl
             _eventPublisher = eventPublisher;
         }
 
-        public async Task<Guid> CreateAsync(CreateMemberDto dto)
+        public async Task<Guid> CreateAsync(RegisterMemberDto dto)
         {
             var member = new Domain.Entities.Member
             {
@@ -42,8 +43,7 @@ namespace MembersService.Application.Services.Impl
 
             await _unitOfWork.Members.AddAsync(member);
             await _unitOfWork.CommitAsync();
-
-            // نشر الحدث
+            // إنشاء الحدث مع بيانات العضو + تفاصيل الاشتراك والدفع
             var memberCreatedEvent = new MemberCreatedEvent(
                 member.Id,
                 member.FullName,
@@ -53,9 +53,15 @@ namespace MembersService.Application.Services.Impl
                 member.Gender,
                 member.Notes,
                 member.CreatedBy,
-                member.CreatedAt
+                member.CreatedAt,
+                dto.PlanId,
+                dto.StartDate,
+                dto.EndDate,
+                dto.IsActive,
+                dto.TotalAmount,
+                dto.IsInstallment,
+                dto.Currency
             );
-
             await _eventPublisher.PublishAsync(memberCreatedEvent);
 
 
