@@ -16,5 +16,15 @@ namespace SubscriptionService.Domain.Entities
         public bool IsActive { get; set; }        // حالة الاشتراك
         public Guid CreatedBy { get; set; }       // معرف المستخدم الذي أنشأ الاشتراك (UserId من IdentityService)
         public DateTime CreatedAt { get; set; }   // وقت إنشاء السجل
+        public void Cancel()
+        {
+            if (!IsActive)
+                return;
+
+            IsActive = false;
+            EndDate = DateTime.UtcNow;
+        }
+
+
     }
 }

@@ -15,12 +15,19 @@ namespace MembersService.Domain.Repositories
         Task AddAsync(Member member);
         Task UpdateAsync(Member member);
         Task DeleteAsync(Guid id);
+        // ======================
+        // Activation / Freezing
+        // ======================
+        Task FreezeAsync(Guid memberId, Guid updatedBy);
+        Task ActivateAsync(Guid memberId, Guid updatedBy);
+
+        // ======================
+        // Statistics
+        // ======================
+        Task<int> GetTotalCountAsync();
+        Task<int> GetActiveCountAsync();
 
         Task<bool> ExistsAsync(Guid id);
 
-        // ------------------------------
-        // إحصاءات
-        Task<int> GetTotalCountAsync();
-        Task<int> GetActiveCountAsync();
     }
 }

@@ -1,33 +1,33 @@
-using FluentValidation;
-using FluentValidation.AspNetCore;
+using GymSaga.API.Application.Services;
+using GymSaga.API.Infrastructure.Clients;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using PaymentService.Application.Services.Abstractions;
-using PaymentService.Application.Services.Impl;
-using PaymentService.Application.Validators;
-using PaymentService.Domian.Repositories;
-using PaymentService.Infrastructure.Persistence;
-using PaymentService.Infrastructure.Repositories;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-
-
-builder.Services.AddDbContext<PaymentDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
-builder.Services.AddScoped<IPaymentInstallmentRepository, PaymentInstallmentRepository>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-builder.Services.AddScoped<IPaySubscriptionService, PaySubscriptionService>();
-
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
+
+
+builder.Services.AddHttpClient<IMembersClient, MembersClient>(c =>
+{
+    c.BaseAddress = new Uri("https://localhost:7031/"); // MembersService
+});
+
+builder.Services.AddHttpClient<ISubscriptionsClient, SubscriptionsClient>(c =>
+{
+    c.BaseAddress = new Uri("https://localhost:7202/"); // SubscriptionService
+});
+
+builder.Services.AddHttpClient<IPaymentsClient, PaymentsClient>(c =>
+{
+    c.BaseAddress = new Uri("https://localhost:7275/"); // PaymentService
+});
+
+builder.Services.AddScoped<IRegisterMemberSagaService, RegisterMemberSagaService>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -59,7 +59,6 @@ builder.Services.AddSwaggerGen(c =>
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
-builder.Services.AddValidatorsFromAssemblyContaining<CreatePaymentDtoValidator>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -75,11 +74,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 builder.Services.AddAuthorization();
-
-
 var app = builder.Build();
-
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

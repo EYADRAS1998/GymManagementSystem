@@ -1,0 +1,6 @@
+@GymSaga.API_HostAddress = http://localhost:5199
+
+GET {{GymSaga.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

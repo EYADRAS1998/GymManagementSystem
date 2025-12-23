@@ -56,7 +56,7 @@ namespace MembersService.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateMemberDto dto)
+        public async Task<IActionResult> Create([FromBody] RegisterMemberDto dto)
         {
             // استخراج UserId من JWT
             var userIdClaim = User.FindFirst("UserId")?.Value;
@@ -103,5 +103,39 @@ namespace MembersService.API.Controllers
             var active = await _memberService.GetActiveCountAsync();
             return Ok(active);
         }
+        /// <summary>
+        /// تجميد العضو (Freeze)
+        /// </summary>
+        [HttpPost("{id}/freeze")]
+        public async Task<IActionResult> Freeze(Guid id)
+        {
+            // استخراج UserId من JWT
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+            if (userIdClaim == null) return Unauthorized("UserId claim is missing in the token.");
+
+            var updatedBy = Guid.Parse(userIdClaim.Value);
+
+            await _memberService.FreezeAsync(id, updatedBy);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// تنشيط العضو (Activate)
+        /// </summary>
+        [HttpPost("{id}/activate")]
+        public async Task<IActionResult> Activate(Guid id)
+        {
+            // استخراج UserId من JWT
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
+            if (userIdClaim == null) return Unauthorized("UserId claim is missing in the token.");
+
+            var updatedBy = Guid.Parse(userIdClaim.Value);
+
+            await _memberService.ActivateAsync(id, updatedBy);
+
+            return NoContent();
+        }
+
     }
 }
