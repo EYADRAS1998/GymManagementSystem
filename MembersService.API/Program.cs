@@ -5,7 +5,6 @@ using MembersService.Application.Services.Impl;
 using MembersService.Application.Validators;
 using MembersService.Domain.Repositories;
 using MembersService.Infrastructure.DependencyInjection;
-using MembersService.Infrastructure.Messaging;
 using MembersService.Infrastructure.Persistence;
 using MembersService.Infrastructure.Repositories;
 using MembersService.Infrastructure.UnitOFWork;
@@ -17,7 +16,6 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<IEventPublisher, MockEventPublisher>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

@@ -90,5 +90,17 @@ namespace SubscriptionService.Application.Services.Impl
 
             return _mapper.Map<SubscriptionReadDto>(subscription);
         }
+
+        public async Task CancelAsync(Guid subscriptionId)
+        {
+            var subscription = await _unitOfWork.Subscriptions.GetByIdAsync(subscriptionId);
+            if (subscription == null)
+                throw new KeyNotFoundException("Subscription not found");
+            subscription.Cancel(); // Domain logic
+
+            _unitOfWork.Subscriptions.Update(subscription);
+            await _unitOfWork.SaveChangesAsync();
+
+        }
     }
 }

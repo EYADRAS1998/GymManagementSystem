@@ -30,5 +30,24 @@ namespace MembersService.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         public ICollection<MemberProgress> ProgressRecords { get; set; } = new List<MemberProgress>();
+        public void Freeze(Guid updatedBy)
+        {
+            if (!IsActive)
+                throw new InvalidOperationException("Member is already frozen.");
+
+            IsActive = false;
+            UpdatedBy = updatedBy;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void Activate(Guid updatedBy)
+        {
+            if (IsActive)
+                throw new InvalidOperationException("Member is already active.");
+
+            IsActive = true;
+            UpdatedBy = updatedBy;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

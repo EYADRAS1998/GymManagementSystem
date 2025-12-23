@@ -21,5 +21,8 @@ namespace MembersService.Application.Services
         // Statistics
         Task<int> GetTotalCountAsync();
         Task<int> GetActiveCountAsync();
+        // State Management
+        Task FreezeAsync(Guid memberId, Guid updatedBy);
+        Task ActivateAsync(Guid memberId, Guid updatedBy);
     }
 }

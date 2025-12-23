@@ -64,5 +64,16 @@ namespace SubscriptionService.Infrastructure.Repositories
         {
             _context.Subscriptions.Update(subscription);
         }
+        public async Task CancelAsync(Guid subscriptionId)
+        {
+            var subscription = await _context.Subscriptions.FindAsync(subscriptionId);
+
+            if (subscription == null)
+                throw new Exception("Subscription not found");
+
+            subscription.Cancel();
+        }
+
+
     }
 }

@@ -16,5 +16,7 @@ namespace SubscriptionService.Domain.Repositories
         Task AddAsync(Subscription subscription);
         void Update(Subscription subscription);
         void Delete(Subscription subscription);
+        Task CancelAsync(Guid subscriptionId);
+
     }
 }

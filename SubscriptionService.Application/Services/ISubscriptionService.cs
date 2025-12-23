@@ -15,5 +15,7 @@ namespace SubscriptionService.Application.Services
         Task<SubscriptionReadDto> CreateAsync(SubscriptionCreateDto dto, Guid createdBy);
         Task<SubscriptionReadDto> UpdateAsync(Guid id, SubscriptionUpdateDto dto);
         Task DeleteAsync(Guid id);
+        Task CancelAsync(Guid subscriptionId);
+
     }
 }

@@ -80,5 +80,30 @@ namespace MembersService.Infrastructure.Repositories
         {
             _context.Members.Update(member);
         }
+
+        public async Task FreezeAsync(Guid memberId, Guid updatedBy)
+        {
+            var member = await _context.Members.FindAsync(memberId);
+
+            if (member == null)
+                throw new Exception("Member not found");
+
+            member.Freeze(updatedBy);
+
+            _context.Members.Update(member);
+        }
+
+        public async Task ActivateAsync(Guid memberId, Guid updatedBy)
+        {
+            var member = await _context.Members.FindAsync(memberId);
+
+            if (member == null)
+                throw new Exception("Member not found");
+
+            member.Activate(updatedBy);
+
+            _context.Members.Update(member);
+        }
+
     }
 }

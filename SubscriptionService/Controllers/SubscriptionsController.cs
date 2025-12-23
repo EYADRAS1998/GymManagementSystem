@@ -66,5 +66,12 @@ namespace SubscriptionService.API.Controllers
             await _subscriptionService.DeleteAsync(id);
             return NoContent();
         }
+        [HttpPost("{id}/cancel")]
+        public async Task<IActionResult> Cancel(Guid id)
+        {
+            await _subscriptionService.CancelAsync(id);
+            return NoContent();
+        }
+
     }
 }

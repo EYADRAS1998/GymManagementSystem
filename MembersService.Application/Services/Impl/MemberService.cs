@@ -1,9 +1,7 @@
 ﻿using Common;
 using Common.DTOs;
-using Common.Events;
 using MembersService.Application.DTOs;
 using MembersService.Domain.Repositories;
-using MembersService.Infrastructure.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +13,11 @@ namespace MembersService.Application.Services.Impl
     public class MemberService : IMemberService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IEventPublisher _eventPublisher;
 
 
-        public MemberService(IUnitOfWork unitOfWork, IEventPublisher eventPublisher)
+        public MemberService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _eventPublisher = eventPublisher;
         }
 
         public async Task<Guid> CreateAsync(RegisterMemberDto dto)
@@ -43,26 +39,7 @@ namespace MembersService.Application.Services.Impl
 
             await _unitOfWork.Members.AddAsync(member);
             await _unitOfWork.CommitAsync();
-            // إنشاء الحدث مع بيانات العضو + تفاصيل الاشتراك والدفع
-            var memberCreatedEvent = new MemberCreatedEvent(
-                member.Id,
-                member.FullName,
-                member.PhoneNumber,
-                member.Email,
-                member.BirthDate,
-                member.Gender,
-                member.Notes,
-                member.CreatedBy,
-                member.CreatedAt,
-                dto.PlanId,
-                dto.StartDate,
-                dto.EndDate,
-                dto.IsActive,
-                dto.TotalAmount,
-                dto.IsInstallment,
-                dto.Currency
-            );
-            await _eventPublisher.PublishAsync(memberCreatedEvent);
+           
 
 
             return member.Id;
@@ -140,6 +117,18 @@ namespace MembersService.Application.Services.Impl
         public async Task<int> GetTotalCountAsync()
         {
             return await _unitOfWork.Members.GetTotalCountAsync();
+        }
+
+        public async Task FreezeAsync(Guid memberId, Guid updatedBy)
+        {
+            await _unitOfWork.Members.FreezeAsync(memberId, updatedBy);
+            await _unitOfWork.CommitAsync();
+        }
+
+        public async Task ActivateAsync(Guid memberId, Guid updatedBy)
+        {
+            await _unitOfWork.Members.ActivateAsync(memberId, updatedBy);
+            await _unitOfWork.CommitAsync();
         }
     }
 }
