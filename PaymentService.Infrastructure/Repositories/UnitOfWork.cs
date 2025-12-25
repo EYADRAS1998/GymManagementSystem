@@ -14,6 +14,7 @@ namespace PaymentService.Infrastructure.Repositories
 
         private IPaymentRepository? _paymentRepository;
         private IPaymentInstallmentRepository? _paymentInstallmentRepository;
+        private IPaymentTransactionRepository? _paymentTransactionRepository;
 
         public UnitOfWork(PaymentDbContext context)
         {
@@ -25,6 +26,9 @@ namespace PaymentService.Infrastructure.Repositories
 
         public IPaymentInstallmentRepository PaymentInstallments
             => _paymentInstallmentRepository ??= new PaymentInstallmentRepository(_context);
+        public IPaymentTransactionRepository paymentTransactionRepository
+            => _paymentTransactionRepository ??= new PaymentTransactionRepository(_context);
+
 
         public async Task<int> SaveChangesAsync()
         {

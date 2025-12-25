@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace PaymentService.Domian.Enums
 {
-    public enum InstallmentStatus
+    public enum TransactionStatus
     {
-        Pending = 1,
-        Paid = 2,
-        Overdue = 3
+        Success = 0,
+        Failed = 1
     }
 }

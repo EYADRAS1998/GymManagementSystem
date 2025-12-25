@@ -1,4 +1,5 @@
 ﻿using Common.DTOs;
+using System.Net.Http.Headers;
 
 namespace GymSaga.API.Infrastructure.Clients
 {

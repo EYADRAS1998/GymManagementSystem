@@ -10,11 +10,10 @@ namespace PaymentService.Application.DTOs.Payments
     public class PaymentInstallmentDto
     {
         public Guid Id { get; set; }
-
+        public int InstallmentNumber { get; set; }
         public decimal Amount { get; set; }
         public DateTime DueDate { get; set; }
         public DateTime? PaidAt { get; set; }
-
         public InstallmentStatus Status { get; set; }
     }
 }

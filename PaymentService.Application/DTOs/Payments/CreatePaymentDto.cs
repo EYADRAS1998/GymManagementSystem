@@ -16,6 +16,7 @@ namespace PaymentService.Application.DTOs.Payments
         public string Currency { get; set; }
 
         public PaymentType PaymentType { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
 
         // تُستخدم فقط في حالة Installments
         public List<CreatePaymentInstallmentDto>? Installments { get; set; }
