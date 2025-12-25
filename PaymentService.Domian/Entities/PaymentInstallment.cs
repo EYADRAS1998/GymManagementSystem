@@ -13,10 +13,12 @@ namespace PaymentService.Domian.Entities
 
         public Guid PaymentId { get; set; }
 
-        public decimal Amount { get; set; }
-        public DateTime DueDate { get; set; }     // تاريخ الاستحقاق
-        public DateTime? PaidAt { get; set; }     // وقت الدفع الفعلي
+        public int InstallmentNumber { get; set; }
 
-        public InstallmentStatus Status { get; set; } // Pending | Paid
+        public decimal Amount { get; set; }
+        public DateTime DueDate { get; set; }
+        public DateTime? PaidAt { get; set; }
+
+        public InstallmentStatus Status { get; set; } // Pending | Paid | Overdue
     }
 }

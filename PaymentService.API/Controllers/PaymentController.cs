@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PaymentService.Application.DTOs.Payments;
 using PaymentService.Application.Services.Abstractions;
-using System.Security.Claims;
 
 namespace PaymentService.API.Controllers
 {
@@ -17,52 +15,55 @@ namespace PaymentService.API.Controllers
             _paySubscriptionService = paySubscriptionService;
         }
 
-        /// <summary>
-        /// إنشاء دفع للاشتراك (نقدًا أو أقساط)
-        /// </summary>
+        // POST: api/Payment
         [HttpPost]
         public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-                                            // استخراج UserId من JWT
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
-            if (userIdClaim == null) return Unauthorized();
-
-            var createdBy = Guid.Parse(userIdClaim.Value);
-
-            var paymentId = await _paySubscriptionService.CreatePaymentAsync(dto, createdBy);
-
-            return CreatedAtAction(nameof(GetPaymentById), new { id = paymentId }, new { Id = paymentId });
+            var userId = Guid.Parse(User.FindFirst("sub")?.Value ?? Guid.NewGuid().ToString());
+            var paymentId = await _paySubscriptionService.CreatePaymentAsync(dto, userId);
+            return Ok(new { PaymentId = paymentId });
         }
 
-        /// <summary>
-        /// دفع قسط
-        /// </summary>
-        [HttpPost("pay-installment")]
-        public async Task<IActionResult> PayInstallment([FromBody] PayInstallmentDto dto)
+        // POST: api/Payment/{paymentId}/Installments/{installmentId}/Pay
+        [HttpPost("{paymentId}/Installments/{installmentId}/Pay")]
+        public async Task<IActionResult> PayInstallment(
+            Guid paymentId,
+            Guid installmentId,
+            [FromBody] PayInstallmentDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            // استخراج UserId من JWT
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("UserId");
-            if (userIdClaim == null) return Unauthorized();
+            var transactionId = await _paySubscriptionService.PayInstallmentAsync(
+                paymentId,
+                installmentId,
+                dto.Amount,
+                dto.Method,
+                dto.ReferenceNumber
+            );
 
-            var paidBy = Guid.Parse(userIdClaim.Value);
-
-            await _paySubscriptionService.PayInstallmentAsync(dto, paidBy);
-
-            return Ok();
+            return Ok(new { TransactionId = transactionId });
         }
 
-        /// <summary>
-        /// استعراض الدفع بواسطة Id
-        /// </summary>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPaymentById(Guid id)
+        // GET: api/Payment/{paymentId}
+        [HttpGet("{paymentId}")]
+        public async Task<IActionResult> GetPaymentDetails(Guid paymentId)
         {
-            // هنا يمكنك إضافة دالة في الخدمة لإرجاع PaymentDto
-            return Ok(); // مؤقتًا
+            var details = await _paySubscriptionService.GetPaymentDetailsAsync(paymentId);
+            return Ok(details);
+        }
+
+        // GET: api/Payment/PendingInstallments/{memberId}
+        [HttpGet("PendingInstallments/{memberId}")]
+        public async Task<IActionResult> GetPendingInstallments(Guid memberId)
+        {
+            var installments = await _paySubscriptionService.GetPendingInstallmentsAsync(memberId);
+            return Ok(installments);
+        }
+
+        // GET: api/Payment/{paymentId}/Transactions
+        [HttpGet("{paymentId}/Transactions")]
+        public async Task<IActionResult> GetPaymentTransactions(Guid paymentId)
+        {
+            var transactions = await _paySubscriptionService.GetPaymentTransactionsAsync(paymentId);
+            return Ok(transactions);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace PaymentService.Infrastructure.Persistence
 
         public DbSet<Payment> Payments => Set<Payment>();
         public DbSet<PaymentInstallment> PaymentInstallments => Set<PaymentInstallment>();
+        public DbSet<PaymentTransaction> PaymentTransactions => Set<PaymentTransaction>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -10,6 +10,7 @@ namespace PaymentService.Domian.Repositories
     {
         IPaymentRepository Payments { get; }
         IPaymentInstallmentRepository PaymentInstallments { get; }
+        IPaymentTransactionRepository paymentTransactionRepository { get; }
 
         Task<int> SaveChangesAsync();
     }

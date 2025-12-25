@@ -5,12 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PaymentService.Domian.Entities
+namespace PaymentService.Application.DTOs.Payments
 {
-    public class Payment
+    public class PaymentDetailsDto
     {
         public Guid Id { get; set; }
-
         public Guid SubscriptionId { get; set; }
         public Guid MemberId { get; set; }
 
@@ -21,12 +20,11 @@ namespace PaymentService.Domian.Entities
         public string Currency { get; set; }
 
         public PaymentType PaymentType { get; set; }
-        public PaymentStatus Status { get; set; } // Pending | PartiallyPaid | Paid
+        public PaymentStatus Status { get; set; }
 
         public DateTime CreatedAt { get; set; }
-        public Guid CreatedBy { get; set; }
 
-        public ICollection<PaymentInstallment> Installments { get; set; }
-        public ICollection<PaymentTransaction> Transactions { get; set; }
+        public IEnumerable<PaymentInstallmentDto> Installments { get; set; }
+        public IEnumerable<PaymentTransactionDto> Transactions { get; set; }
     }
 }
